@@ -21,3 +21,8 @@ spec = do
       part1 "(()(()(" `shouldBe` 3
     it ")())()) is floor -3" $
       part1 ")())())" `shouldBe` -3
+  describe "part2" $ do
+    it ") enters the cellar at 1" $
+      part2 ")" `shouldBe` 1
+    it "()()) should enter the cellar at 5" $
+      part2 "()())" `shouldBe` 5

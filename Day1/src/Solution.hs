@@ -8,8 +8,9 @@ part1 :: Input -> Int
 part1 = sum . map upDown
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 =
+  length . takeWhile (>= 0) . scanl (+) 0 . map upDown
 
 
 upDown :: Char -> Int
