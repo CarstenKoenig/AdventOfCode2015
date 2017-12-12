@@ -16,3 +16,4 @@ Good luck!
 
 - [Day 1](./Day1/readme.md)
 - [Day 2](./Day2/readme.md)
+- [Day 3](./Day3/readme.md)
