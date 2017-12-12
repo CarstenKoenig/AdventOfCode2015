@@ -37,3 +37,7 @@ For example:
 
 What is the position of the character that causes Santa to first enter the
 basement?
+
+## Solution 
+
+in [Haskell](./src/Solution.hs)
