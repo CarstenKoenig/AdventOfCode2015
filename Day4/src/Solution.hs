@@ -8,24 +8,26 @@ import Data.Function (on)
 
 type Input = String
 
+
 secretKey :: Input
 secretKey = "yzbqklnj"
 
 
 part1 :: Input -> Int
-part1 = findHash
+part1 = findHash 5
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 = findHash 6
 
 
-findHash :: Input -> Int
-findHash key =
+findHash :: Int -> Input -> Int
+findHash zeroes key =
   fst . head
-  $ filter (startsWith "00000" . snd)
+  $ filter (startsWith prefix . snd)
   $ map (fmap md5Hash)
   $ attempts key
+  where prefix = replicate zeroes '0'
 
 
 attempts :: Input -> [(Int, String)]
