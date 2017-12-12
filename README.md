@@ -15,3 +15,4 @@ Good luck!
 ## Days
 
 - [Day 1](./Day1/readme.md)
+- [Day 2](./Day2/readme.md)

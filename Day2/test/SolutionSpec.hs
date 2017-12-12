@@ -19,3 +19,9 @@ spec = do
       part1 (parseInput "2x3x4")  `shouldBe` 58
     it "2x3x4 and 1x1x10 should return 58+43" $
       part1 (parseInput "2x3x4\n1x1x10") `shouldBe` (58+43)
+
+  describe "part2" $ do
+    it "ribbon length for parcel 2x3x4 is 34 feet" $
+      part2 (parseInput "2x3x4") `shouldBe` 34
+    it "ribbon length for parcels 2x3x4 and 1x1x10 = 34+14 feet" $
+      part2 (parseInput "2x3x4\n1x1x10") `shouldBe` 48
