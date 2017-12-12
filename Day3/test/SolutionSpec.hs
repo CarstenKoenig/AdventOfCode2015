@@ -19,3 +19,11 @@ spec = do
       part1 (parseInput "^>v<") `shouldBe` 4
     it "^v^v^v^v^v should return 2" $
       part1 (parseInput "^v^v^v^v^v") `shouldBe` 2
+
+  describe "part2" $ do
+    it "^v should return 3" $
+      part2 (parseInput "^v") `shouldBe` 3
+    it "^>v< should return 4" $
+      part2 (parseInput "^>v<") `shouldBe` 3
+    it "^v^v^v^v^v should return 11" $
+      part2 (parseInput "^v^v^v^v^v") `shouldBe` 11

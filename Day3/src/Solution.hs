@@ -20,12 +20,20 @@ part1 :: Input -> Int
 part1 = Set.size . visited . path
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 inp =
+  let (santa, robo) = split inp
+  in Set.size $ (visited $ path santa) `Set.union ` (visited $ path robo)
 
 
 visited :: Path -> Set Coord
 visited = Set.fromList
+
+
+split :: [a] -> ([a],[a])
+split (a:b:rest) = let (as,bs) = split rest in (a:as,b:bs)
+split [a]        = ([a],[])
+split []         = ([],[])
 
 
 path :: Input -> Path
