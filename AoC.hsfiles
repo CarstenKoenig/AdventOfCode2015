@@ -4,7 +4,7 @@ version:             0.1.0.0
 synopsis:            Advent of Code {{name}}
 homepage:            https://github.com/https://github.com/CarstenKoenig/AdventOfCode2015/{{name}}/readme.md
 license:             MIT
-license-file:        LICENSE
+license-file:        ../LICENSE
 author:              Carsten König
 maintainer:          Carsten.gettingsharper.de
 copyright:           Carsten König 2017
