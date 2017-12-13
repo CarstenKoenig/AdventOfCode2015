@@ -19,3 +19,4 @@ Good luck!
 - [Day 3](./Day3/readme.md)
 - [Day 4](./Day4/readme.md)
 - [Day 5](./Day5/readme.md)
+- [Day 6](./Day6/readme.md)
