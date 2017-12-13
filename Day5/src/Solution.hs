@@ -8,13 +8,17 @@ part1 :: Input -> Int
 part1 = length . filter isNice
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 = length . filter isNice2
 
 
 isNice :: String -> Bool
 isNice s =
   contains3Vowels s && containsDouble s && not (containsNaughty s)
+
+
+isNice2 :: String -> Bool
+isNice2 s = containsTripple s && containsTwoNonOverlapping s
 
 
 contains3Vowels :: String -> Bool
@@ -39,6 +43,27 @@ containsNaughty (x:rest@(y:_))
   | otherwise              = containsNaughty rest
   where
     naughties = ["ab", "cd", "pq", "xy"]
+
+
+containsTwoNonOverlapping :: String -> Bool
+containsTwoNonOverlapping [] = False
+containsTwoNonOverlapping [_] = False
+containsTwoNonOverlapping (x:y:rest) =
+   isSubstring [x,y] rest || containsTwoNonOverlapping (y:rest)
+
+
+containsTripple :: String -> Bool
+containsTripple [] = False
+containsTripple [_] = False
+containsTripple [_,_] = False
+containsTripple (x:rest@(_:z:_)) = x == z || containsTripple rest
+
+
+isSubstring :: String -> String -> Bool
+isSubstring [] _ = True
+isSubstring _ [] = False
+isSubstring sub s =
+  sub == take (length sub) s || isSubstring sub (drop 1 s)
 
 
 readInput :: IO Input
