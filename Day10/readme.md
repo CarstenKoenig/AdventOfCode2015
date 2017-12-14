@@ -1,3 +1,6 @@
 # Advent of Code Day10
+see [AoC website](http://adventofcode.com/2015/day/10)
 
-add description of Day10 here
+## solution
+
+- in [Hasell](./src/Solution.hs)

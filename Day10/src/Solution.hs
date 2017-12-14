@@ -6,15 +6,15 @@ type Input = String
 
 
 part1 :: Input -> Int
-part1 = length . run
+part1 = length . run 40
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 = length . run 50
 
 
-run :: Input -> Input
-run = nTimes 40 step
+run :: Int -> Input -> Input
+run n = nTimes n step
 
 step :: Input -> Input
 step = concatMap writeGroup . group
