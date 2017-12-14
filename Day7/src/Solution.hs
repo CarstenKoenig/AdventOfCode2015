@@ -62,8 +62,12 @@ part1 inp =
   in signal res "a"
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Word16
+part2 inp =
+  let b   = part1 inp
+      prg = Assignment "b" (Val (Word b)) : removeAssignmentToB (parseInput inp)
+      res = run prg
+  in signal res "a"
 
 
 run :: Program -> Result
@@ -76,6 +80,13 @@ run prg = fixpoint (flip runProgram prg) Map.empty
 
 signal :: Result -> SignalId -> Word16
 signal env = fromMaybe 0 . getValue env
+
+
+removeAssignmentToB :: Program -> Program
+removeAssignmentToB = filter justB
+  where
+    justB    (Assignment "b" (Val (Word _)))                 = False
+    justB    _                                               = True
 
 
 runProgram :: Environment -> Program -> Environment
