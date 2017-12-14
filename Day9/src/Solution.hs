@@ -20,8 +20,8 @@ part1 :: Input -> Distance
 part1 = minimum . map fst . tours . parseInput
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Distance
+part2 = maximum . map fst . tours . parseInput
 
 
 tours :: Graph -> [(Distance, [City])]
