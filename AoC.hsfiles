@@ -16,6 +16,8 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Solution
+                     , Graph
+                     , Parser
   build-depends:       base >= 4.7 && < 5
                      , containers
   default-language:    Haskell2010
@@ -83,7 +85,265 @@ part2 inp = ()
 
 readInput :: IO Input
 readInput = return ()
+{-# START_FILE src/Graph.hs #-}
+module Graph where
 
+import Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+
+import Data.Set (Set, (\\))
+import qualified Data.Set as Set
+
+import Data.Maybe (mapMaybe, fromMaybe)
+
+----------------------------------------------------------------------
+-- data and types
+
+type Connection n w = (n, n, w)
+
+data Node n w =
+  Node
+  { nodeId :: n
+  , nodeConnections :: [(w, n)]
+  } deriving Show
+
+
+type Graph n w = Map n (Node n w)
+
+type Nodes n = Set n
+
+type Group n = Set n
+
+----------------------------------------------------------------------
+-- graph functions
+
+groups :: Ord n => Graph n w -> [Group n]
+groups g = go (nodes g)
+  where
+    go ns =
+      if Set.null ns
+      then []
+      else
+        let gr = epsClosure g (Set.findMin ns)
+        in  gr : go (ns \\ gr)
+
+
+nodes :: Ord n => Graph n w -> Nodes n
+nodes = Set.fromList . Map.keys
+
+
+epsClosure :: Ord n => Graph n w -> n -> Nodes n
+epsClosure graph i = go Set.empty [i]
+  where
+    go visited [] = visited
+    go visited (i:is) =
+      if i `Set.member` visited
+      then go visited is
+      else go (Set.insert i visited) (is ++ connections graph i)
+
+
+connections :: Ord n => Graph n w -> n -> [n]
+connections g i =
+  fromMaybe []
+  $ fmap (fmap snd . nodeConnections)
+  $ Map.lookup i g
+
+
+emptyGraph :: Graph n w
+emptyGraph = Map.empty
+
+
+insertCon :: Ord n => Connection n w -> Graph n w -> Graph n w
+insertCon (from, to, weight) =
+  Map.insertWith addCon from (Node from [(weight,to)])
+  . Map.insertWith addCon to (Node to [(weight,from)])
+  where
+    addCon n (Node _ cons) = n { nodeConnections = nodeConnections n ++ cons }
+{-# START_FILE src/Parser.hs #-}
+module Parser where
+
+import Data.Char (isDigit, isSpace, isAlpha)
+import Data.List (isPrefixOf)
+
+
+newtype Parser a
+  = Parser { runParser :: String -> Maybe (a, String) }
+
+
+instance Functor Parser where
+  fmap f (Parser p) =
+    Parser (\inp ->
+              case p inp of
+                Nothing -> Nothing
+                Just (v,rem) -> Just (f v, rem))
+
+
+instance Applicative Parser where
+  pure x = Parser (\inp -> Just (x, inp))
+  (Parser f) <*> (Parser x) =
+    Parser (\inp ->
+              case f inp of
+                Nothing -> Nothing
+                Just (f,rem) ->
+                  case x rem of
+                    Nothing -> Nothing
+                    Just (x, rem') ->
+                      Just (f x, rem'))
+
+
+instance Monad Parser where
+  return = pure
+  (Parser m) >>= f =
+    Parser (\inp ->
+              case m inp of
+                Nothing -> Nothing
+                Just (x,rem) -> runParser (f x) rem)
+
+
+eval :: Parser a -> String -> Maybe a
+eval p = (fst <$>) . runParser p
+
+
+failParse :: Parser a
+failParse = Parser (const Nothing)
+
+
+parseList :: Char -> Char -> Char -> Parser a -> Parser [a]
+parseList lBrac rBrac sep p =
+  parseBetween (parseChar lBrac) (parseChar rBrac) $ p `parseSepBy` (parseChar sep)
+
+
+parseBetween :: Parser l -> Parser r -> Parser a -> Parser a
+parseBetween pL pR pA = pL *> pA <* pR
+
+
+parseSepBy :: Parser a -> Parser sep -> Parser [a]
+parseSepBy pa ps = parseEither (parseSepBy1 pa ps) (pure [])
+
+
+parseSepBy1 :: Parser a -> Parser sep -> Parser [a]
+parseSepBy1 pa ps = (:) <$> pa <*> parseEither (ps *> parseSepBy1 pa ps) (pure [])
+
+
+parseOneOf :: [Parser a] -> Parser a
+parseOneOf (a:b:rest) = parseOneOf (parseEither a b : rest)
+parseOneOf [p] = p
+parseOneOf _ = failParse
+
+
+parseEither :: Parser a -> Parser a -> Parser a
+parseEither pa pb =
+  Parser (\inp ->
+            case runParser pa inp of
+              Nothing -> runParser pb inp
+              success -> success)
+
+
+parseMany :: Parser a -> Parser [a]
+parseMany p =
+  Parser (\inp ->
+            case runParser p inp of
+              Nothing -> Just ([], inp)
+              Just (x, rem) ->
+                case runParser (parseMany p) rem of
+                  Nothing -> Just ([x], rem)
+                  Just (xs, rem') -> Just (x:xs, rem'))
+
+
+parseAny :: Parser Char
+parseAny =
+  Parser (\inp ->
+            case inp of
+              c:rem -> Just (c, rem)
+              _ -> Nothing)
+
+
+parsePred :: (Char -> Bool) -> Parser Char
+parsePred f =
+  Parser (\inp ->
+            case inp of
+              c:rem | f c -> Just (c, rem)
+              _ -> Nothing)
+
+
+parseString :: String -> Parser ()
+parseString s =
+  Parser (\inp ->
+            if s `isPrefixOf` inp
+            then Just ((), drop (length s) inp)
+            else Nothing)
+
+
+parseChar :: Char -> Parser ()
+parseChar c = parsePred (== c) *> pure ()
+
+
+parseDigits :: Parser String
+parseDigits = parseMany parseDigit
+
+
+parseAlphas :: Parser String
+parseAlphas = parseMany parseAlpha
+
+
+parseN :: Parser a -> Int -> Parser [a]
+parseN p 0 = pure []
+parseN p n = do
+  a <- p
+  as <- parseN p (n-1)
+  return $ a:as
+
+
+parseWhiteSpaces :: Parser ()
+parseWhiteSpaces = do
+  _ <- parseMany parseWhiteSpace
+  return ()
+
+
+parseNumber :: Parser Int
+parseNumber = do
+  parseWhiteSpaces
+  ds <- parseDigits
+  if null ds
+    then failParse
+    else do
+       parseWhiteSpaces
+       return (read ds)
+
+
+parseNegNumber :: Parser Int
+parseNegNumber = do
+  parseWhiteSpaces
+  parseChar '-'
+  ds <- parseDigits
+  if null ds
+    then failParse
+    else do
+       parseWhiteSpaces
+       return (negate $ read ds)
+
+
+parseInt :: Parser Int
+parseInt =
+  parseEither parseNegNumber parseNumber
+
+
+parseAlpha :: Parser Char
+parseAlpha = parsePred isAlpha
+
+
+parseDigit :: Parser Char
+parseDigit = parsePred isDigit
+
+
+parseWhiteSpace :: Parser Char
+parseWhiteSpace = parsePred isSpace
+
+
+ignoreWhiteSpace :: Parser ()
+ignoreWhiteSpace = do
+  _ <- parseMany parseWhiteSpace
+  return ()
 {-# START_FILE app/Main.hs #-}
 module Main where
 
