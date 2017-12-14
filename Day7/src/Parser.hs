@@ -138,7 +138,7 @@ parseWhiteSpaces = do
   return ()
 
 
-parseNumber :: Parser Int
+parseNumber :: (Read i, Num i) => Parser i
 parseNumber = do
   parseWhiteSpaces
   ds <- parseDigits
@@ -149,7 +149,7 @@ parseNumber = do
        return (read ds)
 
 
-parseNegNumber :: Parser Int
+parseNegNumber :: (Read i, Num i) => Parser i
 parseNegNumber = do
   parseWhiteSpaces
   parseChar '-'
@@ -161,7 +161,7 @@ parseNegNumber = do
        return (negate $ read ds)
 
 
-parseInt :: Parser Int
+parseInt :: (Read i, Num i) => Parser i
 parseInt =
   parseEither parseNegNumber parseNumber
 
