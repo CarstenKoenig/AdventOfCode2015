@@ -24,12 +24,15 @@ type Happiness = Int
 
 
 part1 :: Input -> Happiness
-part1 = maximum . map totalHappiness . tables . parseInput
+part1 = calcTotalHappiness . parseInput
 
 
-part2 :: Input -> ()
-part2 = undefined
+part2 :: Input -> Happiness
+part2 = calcTotalHappiness . addMe . parseInput
 
+
+calcTotalHappiness :: Graph -> Happiness
+calcTotalHappiness = maximum . map totalHappiness . tables
 
 tables :: Graph -> [Table]
 tables gr = genTables gr (persons gr)
@@ -37,6 +40,12 @@ tables gr = genTables gr (persons gr)
 
 totalHappiness :: Table -> Happiness
 totalHappiness = sum . map happy
+
+
+addMe :: Graph -> Graph
+addMe gr =
+  foldr addConnection gr ([ ("Carsten", p, 0) | p <- ps ] ++ [ (p, "Carsten", 0) | p <- ps ])
+  where ps = persons gr
 
 
 genTables :: Graph -> [Person] -> [Table]
