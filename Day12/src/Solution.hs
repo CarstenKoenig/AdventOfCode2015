@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 module Solution (sumNumbers, parseInput, readInput, part1, part2)  where
 
 import Data.Maybe (fromJust)
@@ -19,8 +20,8 @@ part1 :: Input -> Int
 part1 = sumNumbers . parseInput
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 = sumWithoutRed . parseInput
 
 
 sumNumbers :: Json     -> Int
@@ -29,6 +30,19 @@ sumNumbers (JString _)  = 0
 sumNumbers (JArray xs)  = sum $ map sumNumbers xs
 sumNumbers (JObject xs) = sum $ map (sumNumbers . snd) xs
 
+
+sumWithoutRed :: Json     -> Int
+sumWithoutRed (JNumber n)  = n
+sumWithoutRed (JString _)  = 0
+sumWithoutRed (JArray xs)  = sum $ map sumWithoutRed xs
+sumWithoutRed (JObject xs)
+  | containsRed xs         = 0
+  | otherwise              = sum $ map (sumWithoutRed . snd) xs
+
+
+containsRed :: [(String, Json)] -> Bool
+containsRed = any (\case (_, JString "red") -> True
+                         _                  -> False)
 
 parseInput :: Input -> Json
 parseInput = fromJust . eval jsonP

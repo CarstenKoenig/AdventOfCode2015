@@ -11,25 +11,33 @@ main :: IO ()
 main = hspec spec
 
 
-eval :: String -> Int
-eval = sumNumbers . parseInput
-
 spec :: Spec
 spec = do
   describe "part1" $ do
     it "[1,2,3] have sum 6" $ do
-      eval "[1,2,3]" `shouldBe` 6
+      part1 "[1,2,3]" `shouldBe` 6
     it "{'a':2,'b':4} have sum 6" $ do
-      eval "{\"a\":2,\"b\":4}" `shouldBe` 6
+      part1 "{\"a\":2,\"b\":4}" `shouldBe` 6
     it "[[[3]]] have sum 3" $ do
-      eval "[[[3]]]" `shouldBe` 3
+      part1 "[[[3]]]" `shouldBe` 3
     it "{'a':{'b':4},'c':-1} have sum 3" $ do
-      eval "{\"a\":{\"b\":4},\"c\":-1}" `shouldBe` 3
+      part1 "{\"a\":{\"b\":4},\"c\":-1}" `shouldBe` 3
     it "{'a':[-1,1]} have sum 0" $ do
-      eval "{\"a\":[-1,1]}" `shouldBe` 0
+      part1 "{\"a\":[-1,1]}" `shouldBe` 0
     it "[-1,{'a':1}] have sum 0" $ do
-      eval "[-1,{\"a\":1}]" `shouldBe` 0
+      part1 "[-1,{\"a\":1}]" `shouldBe` 0
     it "[] have sum 0" $ do
-      eval "[]" `shouldBe` 0
+      part1 "[]" `shouldBe` 0
     it "{} have sum 0" $ do
-      eval "{}" `shouldBe` 0
+      part1 "{}" `shouldBe` 0
+
+
+  describe "part2" $ do
+    it "[1,2,3] have sum 6" $ do
+      part2 "[1,2,3]" `shouldBe` 6
+    it "[1,{'c':'red','b':2},3] have sum 4" $ do
+      part2 "[1,{\"c\":\"red\",\"b\":2},3]" `shouldBe` 4
+    it "{'d':'red','e':[1,2,3,4],'f':5} have sum 0" $ do
+      part2 "{\"d\":\"red\",\"e\":[1,2,3,4],\"f\":5}" `shouldBe` 0
+    it "[1,\"red\",5] have sum 6" $ do
+      part2 "[1,\"red\",5]" `shouldBe` 6
