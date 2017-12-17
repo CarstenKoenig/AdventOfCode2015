@@ -8,24 +8,41 @@ puzzleInput :: Input
 puzzleInput = 33100000
 
 
-part1 :: Input -> ()
-part1 inp = ()
+part1 :: Input -> Int
+part1 inp = head $ filter (\ nr -> housePresents nr >= inp) [1..]
 
 
 part2 :: Input -> ()
 part2 inp = ()
 
 
+housePresents :: Int -> Int
+housePresents nr = 10 * sigma nr
+
+
 readInput :: IO Input
 readInput = return puzzleInput
 
 
-primeFactors :: Integral a => a -> [(a, Int)]
+type PrimeFactors a = [(a, Int)]
+
+
+sigma :: Integral a => a -> a
+sigma = sigma' . primeFactors
+
+
+sigma' :: Num a => PrimeFactors a -> a
+sigma' = product . map groupSum
+  where groupSum (p, r) = sum . take (r+1) $ iterate (* p) 1
+
+
+primeFactors :: Integral a => a -> PrimeFactors a
 primeFactors n = map factor . group $ collect n primes
   where
     factor ks@(k:_) = (k, length ks)
     collect k ps@(p:ps')
-      | p > k = []
+      | p > k     = []
+      | isPrime k = [k]
       | otherwise =
         let (d,m) = k `divMod` p
         in if m == 0
