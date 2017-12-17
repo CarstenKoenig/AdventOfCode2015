@@ -33,15 +33,16 @@ part1 inp =
 
 
 part2 :: Input -> Int
-part2 = cheat
+part2 = cheat -- astar
 
 
 astar :: Input -> Int
 astar inp =
   let (Problem rs tgt) = parseInput inp
-  in fromJust . fmap length $ aStar (allReplacements rs) (\_ _ -> 1) (heur tgt) (== tgt) "e"
-  where
-    heur tgt !t = T.length tgt - T.length t
+      biggestRight = maximum $ map (T.length . snd) rs
+      heur !t = (T.length tgt - T.length t) `div` biggestRight
+      dist = const (const 1)
+  in fromJust . fmap length $ aStar (allReplacements rs) dist heur (== tgt) "e"
 
 
 -- | the assumed A* algorithm will soon run out of memory (and my time)
