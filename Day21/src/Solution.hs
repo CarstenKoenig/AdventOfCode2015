@@ -35,8 +35,8 @@ part1 :: Input -> Int
 part1 boss = minimum . map equipCost . filter (wins boss) $ map initPlayer outfits
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 boss = maximum . map equipCost . filter (not . wins boss) $ map initPlayer outfits
 
 
 wins :: Boss -> Player -> Bool
