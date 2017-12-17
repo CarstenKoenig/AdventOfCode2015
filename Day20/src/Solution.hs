@@ -12,12 +12,21 @@ part1 :: Input -> Int
 part1 inp = head $ filter (\ nr -> housePresents nr >= inp) [1..]
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 inp = head $ filter (\ nr -> housePresents2 nr >= inp) [1..]
 
 
 housePresents :: Int -> Int
 housePresents nr = 10 * sigma nr
+
+
+housePresents2 :: Int -> Int
+housePresents2 n = 11 * sum (relevantFactors n)
+
+
+relevantFactors :: Int -> [Int]
+relevantFactors n = filter relevant $ factors n
+  where relevant d = n `div` d <= 50
 
 
 readInput :: IO Input
@@ -35,6 +44,18 @@ sigma' :: Num a => PrimeFactors a -> a
 sigma' = product . map groupSum
   where groupSum (p, r) = sum . take (r+1) $ iterate (* p) 1
 
+
+factors :: Integral a => a -> [a]
+factors = factors' . primeFactors
+
+
+factors' :: Num a => PrimeFactors a -> [a]
+factors' pf = go pf
+  where go [] = [1]
+        go ((p,k):ps) = do
+          i <- [0..k]
+          d <- go ps
+          return $ p^i * d
 
 primeFactors :: Integral a => a -> PrimeFactors a
 primeFactors n = map factor . group $ collect n primes
