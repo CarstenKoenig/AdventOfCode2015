@@ -38,16 +38,16 @@ data Register = RegA | RegB
 
 
 part1 :: Input -> Int
-part1 = registerB . execute
+part1 = registerB . execute 0
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 = registerB . execute 1
 
 
-execute :: Program -> Environment
-execute prg = flip S.execState startState $ R.runReaderT run prg
-  where startState = Env 0 0 0
+execute :: Int -> Program -> Environment
+execute a prg = flip S.execState startState $ R.runReaderT run prg
+  where startState = Env a 0 0
 
 
 run :: Computation ()

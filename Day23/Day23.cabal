@@ -15,7 +15,6 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Solution
-                     , Graph
                      , Parser
   build-depends:       base >= 4.7 && < 5
                      , containers
@@ -28,16 +27,4 @@ executable Day23
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , Day23
-  default-language:    Haskell2010
-
-test-suite Day23-test
-  type:                exitcode-stdio-1.0
-  hs-source-dirs:      test
-  main-is:             Spec.hs
-  other-modules:       SolutionSpec
-  build-depends:       base
-                     , Day23
-                     , hspec
-                     , QuickCheck
-  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
