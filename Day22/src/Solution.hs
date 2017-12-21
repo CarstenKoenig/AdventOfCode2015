@@ -103,7 +103,7 @@ findWin :: Fight -> Maybe [Fight]
 findWin fight = aStar (HS.fromList . possiblePlays) dist heur hasWon fight
   where dist ff ft = manaCast ft - manaCast ff
         hasWon f = outcome f == Won
-        heur f = 0 -- let hp = hitpoints (boss f) in ((hp `div` 9) - 1) * 53
+        heur f = let hp = hitpoints (boss f) in hp * 9
 
 
 possiblePlays :: Fight -> [Fight]
