@@ -12,15 +12,17 @@ type Grid = IS.IntSet
 
 
 part1 :: Input -> Int
-part1 inp = IS.size $ run inp 100
+part1 grd = IS.size $ run grd 100 step
 
 
-part2 :: Input -> ()
-part2 inp = ()
+part2 :: Input -> Int
+part2 inp =
+  let grd = IS.union stuck inp
+  in IS.size $ run grd 100 stuckStep
 
 
-run :: Input -> Int -> Grid
-run grd n = nTimes n step grd
+run :: Input -> Int -> (Grid -> Grid) -> Grid
+run grd n f = nTimes n f grd
 
 
 size :: Size
@@ -33,6 +35,13 @@ coords = [ (x,y) | y <- [0..99], x <- [0..99] ]
 
 step :: Grid -> Grid
 step grd = IS.fromList . map toGridIndex $ [ c | c <- coords, isOnNext grd c ]
+
+
+stuckStep :: Grid -> Grid
+stuckStep grd = IS.union stuck $ step grd
+
+stuck :: Grid
+stuck = IS.fromList $ map toGridIndex [(0,0),(99,0),(0,99),(99,99)]
 
 
 isOnNext :: Grid -> Coord -> Bool
