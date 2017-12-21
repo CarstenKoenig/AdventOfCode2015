@@ -36,3 +36,4 @@ Good luck!
 - [Day 21](./Day21/readme.md)
 - [Day 23](./Day23/readme.md)
 - [Day 24](./Day24/readme.md)
+- [Day 25](./Day25/readme.md)
