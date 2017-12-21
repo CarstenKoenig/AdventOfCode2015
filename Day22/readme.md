@@ -121,4 +121,4 @@ With the same starting stats for you and the boss, what is the least amount of m
 
 ## Solution
 
-in [Haskell](./src/Solution.hs)
+is [here](./src/Solution.hs)
