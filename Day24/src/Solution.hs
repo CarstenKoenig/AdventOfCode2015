@@ -12,15 +12,15 @@ type Package = Int
 
 part1 :: Input -> Int
 part1 inp =
-  let tw = targetWeight2 inp
-      (best,_,_,_) = compartmentConfig2 $ pickGroups2 tw (reverse inp)
+  let tw = targetWeight inp
+      (best,_,_) = compartmentConfig $ pickGroups tw (reverse inp)
   in quantumEntanglement best
 
 
 part2 :: Input -> Int
 part2 inp =
-  let tw = targetWeight inp
-      (best,_,_) = compartmentConfig $ pickGroups tw (reverse inp)
+  let tw = targetWeight2 inp
+      (best,_,_,_) = compartmentConfig2 $ pickGroups2 tw (reverse inp)
   in quantumEntanglement best
 
 
@@ -57,9 +57,12 @@ pickGroups2 tgt ws = concatMap (\ l -> go l tgt ws) [1..]
   where
     go smallest t xs = do
       (grp1,xs')  <- pickGroupWithLen smallest t xs
+      (grp2,grp3,grp4) <- take 1 $ rest t xs'
+      return (grp1,grp2,grp3,grp4)
+    rest t xs' = do
       (grp2,xs'') <- pickGroup t xs'
       (grp3,grp4) <- pickGroup t xs'
-      return (grp1,grp2,grp3,grp4)
+      return (grp2,grp3,grp4)
 
 
 pickGroups :: Int -> [Int] -> [([Int],[Int],[Int])]
@@ -67,8 +70,11 @@ pickGroups tgt ws = concatMap (\ l -> go l tgt ws) [1..]
   where
     go smallest t xs = do
       (grp1,xs')  <- pickGroupWithLen smallest t xs
-      (grp2,grp3) <- pickGroup t xs'
+      (grp2,grp3) <- take 1 $ rest t xs'
       return (grp1,grp2,grp3)
+    rest t xs' = do 
+      (grp2,grp3) <- pickGroup t xs'
+      return (grp2,grp3)
 
 
 pickGroupWithLen :: Int -> Int -> [Int] -> [([Int], [Int])]
