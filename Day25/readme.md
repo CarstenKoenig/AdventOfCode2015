@@ -53,7 +53,10 @@ The machine springs to life, then falls silent again. It beeps. "Insufficient fu
 
 ..."one star is available"? You check the fuel tank; sure enough, a lone star sits at the bottom, awaiting its friends. Looks like you need to provide 49 yourself.
 
-You don't have enough stars to start the machine, though. You need 4 more.
+You fill the weather machine with fifty stars. It comes to life!
+
+Snow begins to fall.
+
 
 ## Solution
 

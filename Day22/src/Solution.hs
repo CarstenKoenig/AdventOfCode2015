@@ -103,49 +103,32 @@ findWin :: Fight -> Maybe [Fight]
 findWin fight = aStar (HS.fromList . possiblePlays) dist heur hasWon fight
   where dist ff ft = manaCast ft - manaCast ff
         hasWon f = outcome f == Won
-        heur f = 0 -- let hp = hitpoints (boss f) in (hp `div` 9) * 53
+        heur f = 0 -- let hp = hitpoints (boss f) in ((hp `div` 9) - 1) * 53
 
 
 possiblePlays :: Fight -> [Fight]
-possiblePlays fight = do
-  let fight' = effectsRound fight
-  case outcome fight' of
-    Won -> return fight'
-    _   -> do
-      spell <- availableSpells fight'
-      let fight'' = heroRound spell fight'
-      case outcome fight'' of
-        Won -> return fight''
+possiblePlays fight0 = do
+  let fight = damageHero 1 fight0
+  case outcome fight of
+    Died -> []
+    _ -> do
+      let fight' = effectsRound fight
+      case outcome fight' of
+        Won -> return fight'
         _   -> do
-          let fight''' = effectsRound fight''
-          case outcome fight''' of
-            Won  -> return fight'''
-            _  -> do
-              let fight'''' = bossRound fight'''
-              case outcome fight'''' of
-                Died -> []
-                _ -> return fight''''
-
-
-play :: Spell -> Fight -> [Fight]
-play spell fight = do
-  let fight' = effectsRound fight
-  case outcome fight' of
-    Won -> return fight'
-    _   -> do
-      let fight'' = heroRound spell fight'
-      case outcome fight'' of
-        Won -> return fight''
-        _   -> do
-          let fight''' = effectsRound fight''
-          case outcome fight''' of
-            Won  -> return fight'''
-            _  -> do
-              let fight'''' = bossRound fight'''
-              case outcome fight'''' of
-                Died -> []
-                _ -> return fight''''
-
+          spell <- availableSpells fight'
+          let fight'' = heroRound spell fight'
+          case outcome fight'' of
+            Won -> return fight''
+            _   -> do
+              let fight''' = effectsRound fight''
+              case outcome fight''' of
+                Won  -> return fight'''
+                _  -> do
+                  let fight'''' = bossRound fight'''
+                  case outcome fight'''' of
+                    Died -> []
+                    _ -> return fight''''
 
 
 availableSpells :: Fight -> [Spell]
