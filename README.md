@@ -1,5 +1,7 @@
 # Advent of Code 2015
 
+![Finished](./Finished.png)
+
 Santa was hoping for a white Christmas, but his weather machine's "snow"
 function is powered by stars, and he's fresh out! To save Christmas, he needs
 you to collect fifty stars by December 25th.
@@ -46,7 +48,6 @@ Good luck!
 
 see [snowing site](http://adventofcode.com/2015/day/25/answer)
 
-![Finished](./Finished.png)
-
-
 Congratulations! You've finished every puzzle in Advent of Code 2015! I hope you had as much fun solving them as I had making them for you. I'd love to hear about your adventure; you can get in touch with me via contact info on my website or through Twitter.
+
+![Finished](./Finished.png)
